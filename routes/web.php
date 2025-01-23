@@ -8,4 +8,4 @@ Route::get('/', function () {
 });
 
 //Route::resource('incomes', IncomeController::class);
-Route::get('/incomes', [IncomeController::class, 'index']);
+Route::get('/incomes', [IncomeController::class, 'index'])->name('incomes.index');
