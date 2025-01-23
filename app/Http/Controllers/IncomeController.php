@@ -9,23 +9,31 @@ class IncomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $tableData = [
-            'heading' => [
-                'date','category','amount','nuevaCategoria'
-            ],
-            'data' => [
-                ['12/12/2012','salary','2500', '1'],
-                ['12/01/2013','salary','2500', '1'],
-                ['12/02/2013','salary','2550', '1']
-            ]
 
-        ]; 
-        //Aquí la lógica de negocio para el index
-        return view('income.index',['title' => 'My incomes','tableData' => $tableData]);
-        
-    }
+public function index()
+{
+    $tableData = [
+        'heading' => [
+            'date', 'category', 'amount', 'nuevaCategoria'
+        ],
+        'data' => [
+            ['12/12/2012', 'salary', '2500', '1'],
+            ['12/01/2013', 'salary', '2500', '1'],
+            ['12/02/2013', 'salary', '2550', '1']
+        ]
+    ]; 
+    $nombreEnlace = [
+        'enlace' => 'http://holahola.es',
+    ];
+
+
+    return view('income.index', [
+        'title' => 'My incomes',
+        'tableData' => $tableData,
+        'nombreEnlace' => $nombreEnlace
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.
