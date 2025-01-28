@@ -1,12 +1,15 @@
-
-@foreach($nombreEnlace as $key => $value)
-    @if($key === 'enlace')
-        <a href="{{ $value }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Enviar a enlace
+<div>
+    @if($attributes->has('href'))
+        <a href="{{ $attributes->get('href') }}" {{ $attributes->has('class')?$attributes->except('href'):$attributes->except('href')->merge(['class' => 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded inline-block']) }}>
+            {{ $slot }}
         </a>
-    @elseif ($key === 'nombre')
-        <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-            Add Income
+    @elseif($attributes->has('name'))
+        <button type="submit" name="{{ $attributes->get('name') }}" {{ $attributes->has('class')?$attributes->except('href'):$attributes->except('name')->merge(['class' => 'bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded']) }}>
+            {{ $slot }}
+        </button>
+    @else
+        <button type="button" {{ $attributes->has('class')?$attributes->except('href'):$attributes->merge(['class' => 'bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded']) }}>
+            {{ $slot }}
         </button>
     @endif
-@endforeach
+</div>

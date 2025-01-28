@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
+            $table->date('date');
+            $table->string('category');
             $table->double('amount');
             $table->timestamps();
         });
