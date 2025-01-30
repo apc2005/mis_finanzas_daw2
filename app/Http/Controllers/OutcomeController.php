@@ -3,24 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Income; 
+use App\Models\Outcome;
 
-class IncomeController extends Controller
+class OutcomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $incomes = Income::all();
+        $outcome = Outcome::all();
         
         $tableData = [
-            'heading' => ['date', 'category', 'amount'],
-            'data' => $incomes->map(function ($income) {
+            'heading' => ['date', 'category', 'taxes'],
+            'data' => $outcome->map(function ($outcome) {
                 return [
-                    $income->date,
-                    $income->category,
-                    $income->amount,
+                    $outcome->date,
+                    $outcome->category,
+                    $outcome->taxes,
                 ];
             }),
         ];
@@ -34,8 +34,8 @@ class IncomeController extends Controller
             ['title' => 'Outcomes', 'route' => 'outcomes'],
         ];
 
-        return view('income.index', [
-            'title' => 'My incomes',
+        return view('outcome.index', [
+            'title' => 'My outcomes',
             'tableData' => $tableData,
             'nombreEnlace' => $nombreEnlace,
             'elementos' => $elementos
