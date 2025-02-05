@@ -47,7 +47,7 @@ class OutcomeController extends Controller
      */
     public function create()
     {
-        return '<p>Esta es la página del create de incomes</p>';
+        return view('outcome.create');
     }
 
     /**
@@ -55,8 +55,25 @@ class OutcomeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validar los datos del formulario
+        $request->validate([
+            'date' => 'required|date',
+            'category' => 'required|string|max:255',
+            'taxes' => 'required|numeric|min:0',
+        ]);
+    
+        // Crear un nuevo ingreso en la base de datos
+        Outcome::create([
+            'date' => $request->date,
+            'category' => $request->category,
+            'taxes' => $request->taxes,
+        ]);
+    
+        // Redirigir a la lista de ingresos con un mensaje de éxito
+        return redirect()->route('outcomes.index')->with('success', 'Outcome added successfully!');
     }
+    
+    
 
     /**
      * Display the specified resource.

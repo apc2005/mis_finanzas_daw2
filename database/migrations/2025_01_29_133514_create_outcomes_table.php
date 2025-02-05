@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('category');
-            $table->double('amount');  
             $table->double('taxes');  
             $table->timestamps();      
         });

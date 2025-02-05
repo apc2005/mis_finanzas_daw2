@@ -47,16 +47,33 @@ class IncomeController extends Controller
      */
     public function create()
     {
-        return '<p>Esta es la página del create de incomes</p>';
+        return view('income.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
-    }
+{
+    // Validar los datos del formulario
+    $request->validate([
+        'date' => 'required|date',
+        'category' => 'required|string|max:255',
+        'amount' => 'required|numeric|min:0',
+    ]);
+
+    // Crear un nuevo ingreso en la base de datos
+    Income::create([
+        'date' => $request->date,
+        'category' => $request->category,
+        'amount' => $request->amount,
+    ]);
+
+    // Redirigir a la lista de ingresos con un mensaje de éxito
+    return redirect()->route('incomes.index')->with('success', 'Income added successfully!');
+}
+
+    
 
     /**
      * Display the specified resource.
