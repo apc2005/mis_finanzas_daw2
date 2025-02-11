@@ -18,7 +18,6 @@ class OutcomeController extends Controller
             'heading' => ['date', 'category', 'taxes'],
             'data' => $outcomes->map(function ($outcome) {
                 return [
-                    'id' => $outcome->id,  
                     'date' => $outcome->date,
                     'category' => $outcome->category,
                     'taxes' => $outcome->taxes,
