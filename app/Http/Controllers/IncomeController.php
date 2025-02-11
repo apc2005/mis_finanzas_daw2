@@ -13,7 +13,7 @@ class IncomeController extends Controller
     public function index()
     {
         $incomes = Income::all();
-        
+    
         $tableData = [
             'heading' => ['date', 'category', 'amount'],
             'data' => $incomes->map(function ($income) {
@@ -24,23 +24,24 @@ class IncomeController extends Controller
                 ];
             }),
         ];
-
-        $nombreEnlace = [
-            'enlace' => 'http://holahola.es',
-        ];
-
+    
+        $nombreEnlace = ['enlace' => 'http://holahola.es'];
         $elementos = [
             ['title' => 'Incomes', 'route' => 'incomes'],
             ['title' => 'Outcomes', 'route' => 'outcomes'],
         ];
-
+    
         return view('income.index', [
             'title' => 'My incomes',
             'tableData' => $tableData,
             'nombreEnlace' => $nombreEnlace,
-            'elementos' => $elementos
+            'elementos' => $elementos,
+            'incomes' => $incomes,
+            'routeName' => 'incomes', 
         ]);
     }
+    
+    
 
     /**
      * Show the form for creating a new resource.
@@ -87,23 +88,63 @@ class IncomeController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        return '<p>Esta es la página del edit de incomes</p>';
-    }
+{
+    $income = Income::findOrFail($id);
+    
+    $elementos = [
+        ['title' => 'Incomes', 'route' => 'incomes'],
+        ['title' => 'Outcomes', 'route' => 'outcomes'],
+    ];
+    
+    return view('income.update', compact('income', 'elementos'));
+}
+
+    
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    /**
+ * Update the specified resource in storage.
+ */
+/**
+ * Update the specified resource in storage.
+ */
+public function update(Request $request, string $id)
+{
+    // Validar los datos del formulario
+    $request->validate([
+        'date' => 'required|date',
+        'category' => 'required|string|max:255',
+        'amount' => 'required|numeric|min:0',
+    ]);
+
+    // Buscar el ingreso en la base de datos
+    $income = Income::findOrFail($id);
+
+    // Actualizar los datos
+    $income->update([
+        'date' => $request->date,
+        'category' => $request->category,
+        'amount' => $request->amount,
+    ]);
+
+    // Redirigir con un mensaje de éxito
+    return redirect()->route('incomes.index')->with('success', 'Income updated successfully!');
+}
+
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $income = Income::findOrFail($id);  
+        // Eliminar el Outcome
+        $income->delete();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->route('incomes.index')->with('success', 'Outcome deleted successfully');
     }
 }

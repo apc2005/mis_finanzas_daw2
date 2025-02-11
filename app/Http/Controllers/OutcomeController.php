@@ -12,35 +12,42 @@ class OutcomeController extends Controller
      */
     public function index()
     {
-        $outcome = Outcome::all();
+        $outcomes = Outcome::all();
         
         $tableData = [
             'heading' => ['date', 'category', 'taxes'],
-            'data' => $outcome->map(function ($outcome) {
+            'data' => $outcomes->map(function ($outcome) {
                 return [
-                    $outcome->date,
-                    $outcome->category,
-                    $outcome->taxes,
+                    'id' => $outcome->id,  
+                    'date' => $outcome->date,
+                    'category' => $outcome->category,
+                    'taxes' => $outcome->taxes,
                 ];
             }),
         ];
-
+    
         $nombreEnlace = [
             'enlace' => 'http://holahola.es',
         ];
-
+    
         $elementos = [
             ['title' => 'Incomes', 'route' => 'incomes'],
             ['title' => 'Outcomes', 'route' => 'outcomes'],
         ];
-
+    
         return view('outcome.index', [
             'title' => 'My outcomes',
             'tableData' => $tableData,
             'nombreEnlace' => $nombreEnlace,
-            'elementos' => $elementos
+            'elementos' => $elementos,
+            'outcomes' => $outcomes,
+            'routeName' => 'outcomes', 
+            'models' => $outcomes,  
         ]);
+        
+        
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -49,7 +56,7 @@ class OutcomeController extends Controller
     {
         return view('outcome.create');
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -88,7 +95,14 @@ class OutcomeController extends Controller
      */
     public function edit(string $id)
     {
-        return '<p>Esta es la página del edit de incomes</p>';
+        $outcome = Outcome::findOrFail($id);
+    
+        $elementos = [
+            ['title' => 'Incomes', 'route' => 'incomes'],
+            ['title' => 'Outcomes', 'route' => 'outcomes'],
+        ];
+    
+        return view('outcome.update', compact('outcome', 'elementos'));
     }
 
     /**
@@ -96,14 +110,38 @@ class OutcomeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validar los datos del formulario
+        $request->validate([
+            'date' => 'required|date',
+            'category' => 'required|string|max:255',
+            'taxes' => 'required|numeric|min:0',
+        ]);
+    
+        // Buscar el ingreso en la base de datos
+        $outcome = Outcome::findOrFail($id);
+    
+        // Actualizar los datos
+        $outcome->update([
+            'date' => $request->date,
+            'category' => $request->category,
+            'taxes' => $request->taxes,
+        ]);
+    
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('outcomes.index')->with('success', 'Outcome updated successfully!');
     }
+    
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $outcome = Outcome::findOrFail($id);  
+        // Eliminar el Outcome
+        $outcome->delete();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->route('outcomes.index')->with('success', 'Outcome deleted successfully');
     }
 }
