@@ -13,6 +13,3 @@ Route::get('/', function () {
 Route::resource('incomes', IncomeController::class);
 
 Route::resource('outcomes', OutcomeController::class);
-
-Route::delete('/outcomes/{outcome}', [OutcomeController::class, 'destroy'])->name('outcomes.destroy');
-Route::delete('/incomes/{income}', [IncomeController::class, 'destroy'])->name('incomes.destroy');

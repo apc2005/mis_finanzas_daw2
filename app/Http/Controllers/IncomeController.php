@@ -55,24 +55,18 @@ class IncomeController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    // Validar los datos del formulario
-    $request->validate([
-        'date' => 'required|date',
-        'category' => 'required|string|max:255',
-        'amount' => 'required|numeric|min:0',
-    ]);
-
-    // Crear un nuevo ingreso en la base de datos
-    Income::create([
-        'date' => $request->date,
-        'category' => $request->category,
-        'amount' => $request->amount,
-    ]);
-
-    // Redirigir a la lista de ingresos con un mensaje de éxito
-    return redirect()->route('incomes.index')->with('success', 'Income added successfully!');
-}
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01|max:999999',
+            'category' => 'required|string|max:20',
+            'date' => 'required|date|before_or_equal:today',
+        ]);
+    
+        Income::create($request->all());
+    
+        return redirect()->route('incomes.index')->with('success', 'Ingreso agregado correctamente.');
+    }
+    
 
     
 
@@ -114,10 +108,11 @@ public function update(Request $request, string $id)
 {
     // Validar los datos del formulario
     $request->validate([
-        'date' => 'required|date',
-        'category' => 'required|string|max:255',
-        'amount' => 'required|numeric|min:0',
+        'amount' => 'required|numeric|min:0.01|max:999999',
+        'category' => 'required|string|max:20',
+        'date' => 'required|date|before_or_equal:today',
     ]);
+
 
     // Buscar el ingreso en la base de datos
     $income = Income::findOrFail($id);

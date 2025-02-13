@@ -22,7 +22,7 @@
                 <label for="category" class="form-label">Category</label>
                 <input type="text" class="form-control" id="category" name="category" value="{{ old('category', $outcome->category) }}" required>
             </div>
-
+ç
             <div class="mb-3">
                 <label for="taxes" class="form-label">Taxes</label>
                 <input type="number" class="form-control" id="taxes" name="taxes" value="{{ old('taxes', $outcome->taxes) }}" step="0.01" required>
