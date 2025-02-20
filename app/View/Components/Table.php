@@ -2,25 +2,23 @@
 
 namespace App\View\Components;
 
-use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class Table extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct(public array $tableData)
+    public $columns;
+    public $models;
+
+    // Aquí esperamos las variables columns y models
+    public function __construct(array $columns, $models)
     {
-        //
+        $this->columns = $columns;
+        $this->models = $models;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
-    public function render(): View|Closure|string
+    public function render()
     {
         return view('components.table');
     }
 }
+

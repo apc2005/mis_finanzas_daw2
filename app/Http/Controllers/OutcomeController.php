@@ -10,43 +10,40 @@ class OutcomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $outcomes = Outcome::all();
+            $category = $request->query('category');
         
-        $tableData = [
-            'heading' => ['date', 'category', 'taxes'],
-            'data' => $outcomes->map(function ($outcome) {
-                return [
-                    'date' => $outcome->date,
-                    'category' => $outcome->category,
-                    'taxes' => $outcome->taxes,
-                ];
-            }),
-        ];
-    
-        $nombreEnlace = [
-            'enlace' => 'http://holahola.es',
-        ];
-    
-        $elementos = [
-            ['title' => 'Incomes', 'route' => 'incomes'],
-            ['title' => 'Outcomes', 'route' => 'outcomes'],
-        ];
-    
-        return view('outcome.index', [
-            'title' => 'My outcomes',
-            'tableData' => $tableData,
-            'nombreEnlace' => $nombreEnlace,
-            'elementos' => $elementos,
-            'outcomes' => $outcomes,
-            'routeName' => 'outcomes', 
-            'models' => $outcomes,  
-        ]);
+            $query = Outcome::query();
+            if ($category) {
+                $query->where('category', $category);
+            }
         
+            $outcomes = $query->get();
         
+            $tableData = [
+                'heading' => ['ID', 'Date', 'Category', 'Amount'],
+                'data' => $outcomes->map(function ($outcomes) {
+                    return [
+                        'id' => $outcomes->id,
+                        'date' => $outcomes->date,
+                        'category' => $outcomes->category,
+                        'amount' => $outcomes->amount,
+                    ];
+                }),
+            ];
+        
+            $elementos = [
+                ['title' => 'Incomes', 'route' => 'incomes'],
+                ['title' => 'Outcomes', 'route' => 'outcomes'],
+                ['title' => 'Categories', 'route' => 'categories'],
+            ];
+        
+            $title = "My Outcomes";
+            $routeName = "outcomes";
+        
+            return view('outcome.index', compact('title', 'tableData', 'elementos', 'outcomes', 'routeName'));  
     }
-    
 
     /**
      * Show the form for creating a new resource.
@@ -63,9 +60,9 @@ class OutcomeController extends Controller
     {
         // Validar los datos del formulario
         $request->validate([
-            'date' => 'required|date',
-            'category' => 'required|string|max:255',
-            'taxes' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0.01|max:999999',
+            'category' => 'required|string|max:20',
+            'date' => 'required|date|before_or_equal:today',
         ]);
     
         // Crear un nuevo ingreso en la base de datos
@@ -111,9 +108,9 @@ class OutcomeController extends Controller
     {
         // Validar los datos del formulario
         $request->validate([
-            'date' => 'required|date',
-            'category' => 'required|string|max:255',
-            'taxes' => 'required|numeric|min:0',
+            'taxes' => 'required|numeric|min:0.01|max:999999',
+            'category' => 'required|string|max:20',
+            'date' => 'required|date|before_or_equal:today',
         ]);
     
         // Buscar el ingreso en la base de datos

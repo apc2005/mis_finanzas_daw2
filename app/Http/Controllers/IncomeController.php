@@ -1,55 +1,52 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Income; 
+use App\Models\Income;
 
 class IncomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $incomes = Income::all();
-    
-        $tableData = [
-            'heading' => ['date', 'category', 'amount'],
-            'data' => $incomes->map(function ($income) {
-                return [
-                    $income->date,
-                    $income->category,
-                    $income->amount,
-                ];
-            }),
-        ];
-    
-        $nombreEnlace = ['enlace' => 'http://holahola.es'];
-        $elementos = [
-            ['title' => 'Incomes', 'route' => 'incomes'],
-            ['title' => 'Outcomes', 'route' => 'outcomes'],
-        ];
-    
-        return view('income.index', [
-            'title' => 'My incomes',
-            'tableData' => $tableData,
-            'nombreEnlace' => $nombreEnlace,
-            'elementos' => $elementos,
-            'incomes' => $incomes,
-            'routeName' => 'incomes', 
-        ]);
-    }
-    
-    
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('income.create');
-    }
+     public function index(Request $request)
+     {
+         $category = $request->query('category');
+     
+         $query = Income::query();
+         if ($category) {
+             $query->where('category', $category);
+         }
+     
+         $incomes = $query->get();
+     
+         $tableData = [
+             'heading' => ['ID', 'Date', 'Category', 'Amount'],
+             'data' => $incomes->map(function ($income) {
+                 return [
+                     'id' => $income->id,
+                     'date' => $income->date,
+                     'category' => $income->category,
+                     'amount' => $income->amount,
+                 ];
+             }),
+         ];
+     
+         $elementos = [
+             ['title' => 'Incomes', 'route' => 'incomes'],
+             ['title' => 'Outcomes', 'route' => 'outcomes'],
+             ['title' => 'Categories', 'route' => 'categories'],
+         ];
+     
+         $title = "My Incomes";
+         $routeName = "incomes";
+     
+         return view('income.index', compact('title', 'tableData', 'elementos', 'incomes', 'routeName'));
+     }
+     
+        
+
 
     /**
      * Store a newly created resource in storage.
@@ -61,85 +58,55 @@ class IncomeController extends Controller
             'category' => 'required|string|max:20',
             'date' => 'required|date|before_or_equal:today',
         ]);
-    
+
         Income::create($request->all());
-    
+
         return redirect()->route('incomes.index')->with('success', 'Ingreso agregado correctamente.');
     }
     
-
-    
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function create()
     {
-        return '<p>Esta es la página del show de incomes</p>';
+        return view('income.create');
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-{
-    $income = Income::findOrFail($id);
-    
-    $elementos = [
-        ['title' => 'Incomes', 'route' => 'incomes'],
-        ['title' => 'Outcomes', 'route' => 'outcomes'],
-    ];
-    
-    return view('income.update', compact('income', 'elementos'));
-}
-
-    
 
     /**
      * Update the specified resource in storage.
      */
-    /**
- * Update the specified resource in storage.
- */
-/**
- * Update the specified resource in storage.
- */
-public function update(Request $request, string $id)
-{
-    // Validar los datos del formulario
-    $request->validate([
-        'amount' => 'required|numeric|min:0.01|max:999999',
-        'category' => 'required|string|max:20',
-        'date' => 'required|date|before_or_equal:today',
-    ]);
 
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01|max:999999',
+            'category' => 'required|string|max:20',
+            'date' => 'required|date|before_or_equal:today',
+        ]);
 
-    // Buscar el ingreso en la base de datos
-    $income = Income::findOrFail($id);
+        $income = Income::findOrFail($id);
 
-    // Actualizar los datos
-    $income->update([
-        'date' => $request->date,
-        'category' => $request->category,
-        'amount' => $request->amount,
-    ]);
+        $income->update([
+            'date' => $request->date,
+            'category' => $request->category,
+            'amount' => $request->amount,
+        ]);
 
-    // Redirigir con un mensaje de éxito
-    return redirect()->route('incomes.index')->with('success', 'Income updated successfully!');
-}
+        return redirect()->route('incomes.index')->with('success', 'Ingreso actualizado correctamente.');
+    }
 
+    public function show(string $id)
+    {
+        $income = Income::findOrFail($id);
 
-
+        return view('income.show', compact('income'));
+    }
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $income = Income::findOrFail($id);  
-        // Eliminar el Outcome
+        $income = Income::findOrFail($id);
+
         $income->delete();
 
-        // Redirigir con mensaje de éxito
-        return redirect()->route('incomes.index')->with('success', 'Outcome deleted successfully');
+        return redirect()->route('incomes.index')->with('success', 'Ingreso eliminado correctamente.');
     }
 }
