@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class OutcomeSeeder extends Seeder
 {
@@ -15,10 +15,13 @@ class OutcomeSeeder extends Seeder
     {
         $now = now();
         $data = [];
+    
+        $categories = Category::whereIn('name', ['salario', 'donación'])->get();
+    
         for ($i = 0; $i <= 50; $i++) {
             $data[] = [
                 'date' => $now,
-                'category' => 'expense',
+                'category_id' => $categories->random()->id, 
                 'taxes' => rand(50, 5000),
                 'created_at' => $now,
                 'updated_at' => $now,

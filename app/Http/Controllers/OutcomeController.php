@@ -27,7 +27,7 @@ class OutcomeController extends Controller
                     return [
                         'id' => $outcomes->id,
                         'date' => $outcomes->date,
-                        'category' => $outcomes->category,
+                        'category' => $outcomes->category->name,
                         'amount' => $outcomes->amount,
                     ];
                 }),
@@ -58,23 +58,20 @@ class OutcomeController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos del formulario
         $request->validate([
             'amount' => 'required|numeric|min:0.01|max:999999',
-            'category' => 'required|string|max:20',
+            'category_id' => 'required|exists:categories,id',
             'date' => 'required|date|before_or_equal:today',
         ]);
     
-        // Crear un nuevo ingreso en la base de datos
         Outcome::create([
             'date' => $request->date,
-            'category' => $request->category,
+            'category_id' => $request->category_id,
             'taxes' => $request->taxes,
         ]);
-    
-        // Redirigir a la lista de ingresos con un mensaje de éxito
         return redirect()->route('outcomes.index')->with('success', 'Outcome added successfully!');
     }
+    
     
     
 
@@ -106,24 +103,22 @@ class OutcomeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validar los datos del formulario
+
         $request->validate([
             'taxes' => 'required|numeric|min:0.01|max:999999',
             'category' => 'required|string|max:20',
             'date' => 'required|date|before_or_equal:today',
         ]);
     
-        // Buscar el ingreso en la base de datos
+
         $outcome = Outcome::findOrFail($id);
     
-        // Actualizar los datos
         $outcome->update([
             'date' => $request->date,
             'category' => $request->category,
             'taxes' => $request->taxes,
         ]);
-    
-        // Redirigir con un mensaje de éxito
+
         return redirect()->route('outcomes.index')->with('success', 'Outcome updated successfully!');
     }
     
@@ -134,10 +129,8 @@ class OutcomeController extends Controller
     public function destroy($id)
     {
         $outcome = Outcome::findOrFail($id);  
-        // Eliminar el Outcome
         $outcome->delete();
 
-        // Redirigir con mensaje de éxito
         return redirect()->route('outcomes.index')->with('success', 'Outcome deleted successfully');
     }
 }

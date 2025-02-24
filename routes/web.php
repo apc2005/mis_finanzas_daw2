@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\OutcomeController;
+use App\Http\Controllers\CategoryController;
 use App\Models\Income;
 
 Route::get('/', function () {
@@ -13,3 +14,6 @@ Route::get('/', function () {
 Route::resource('incomes', IncomeController::class);
 
 Route::resource('outcomes', OutcomeController::class);
+
+Route::resource('categories', CategoryController::class);
+

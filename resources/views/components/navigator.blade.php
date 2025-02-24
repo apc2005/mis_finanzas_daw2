@@ -10,16 +10,17 @@
                         <div class="ml-10 flex items-baseline space-x-4">
 
                             @foreach ($elementos as $enlace)
-                                @if (request()->path() == $enlace['route'])
-                                    <a href="{{ $enlace['route'] }}" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">
-                                        {{ $enlace['title'] }}
-                                    </a>
-                                @else
-                                    <a href="{{ $enlace['route'] }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
-                                        {{ $enlace['title'] }}
-                                    </a>
-                                @endif
-                            @endforeach
+                            @if (request()->path() == ltrim($enlace['route'], '/'))
+                                <a href="{{ url($enlace['route']) }}" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">
+                                    {{ $enlace['title'] }}
+                                </a>
+                            @else
+                                <a href="{{ url($enlace['route']) }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                                    {{ $enlace['title'] }}
+                                </a>
+                            @endif
+                        @endforeach
+                        
 
                         </div>
                         

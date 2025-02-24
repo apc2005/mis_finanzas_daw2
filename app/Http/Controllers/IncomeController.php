@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Income;
+use App\Models\Category;
 
 class IncomeController extends Controller
 {
@@ -13,21 +14,23 @@ class IncomeController extends Controller
      public function index(Request $request)
      {
          $category = $request->query('category');
+         
+         $query = Income::with('category'); 
      
-         $query = Income::query();
          if ($category) {
              $query->where('category', $category);
          }
      
          $incomes = $query->get();
      
+
          $tableData = [
              'heading' => ['ID', 'Date', 'Category', 'Amount'],
              'data' => $incomes->map(function ($income) {
                  return [
                      'id' => $income->id,
                      'date' => $income->date,
-                     'category' => $income->category,
+                     'category' => $income->category->name,
                      'amount' => $income->amount,
                  ];
              }),
@@ -42,10 +45,9 @@ class IncomeController extends Controller
          $title = "My Incomes";
          $routeName = "incomes";
      
-         return view('income.index', compact('title', 'tableData', 'elementos', 'incomes', 'routeName'));
+         return view('income.index', compact('title', 'tableData', 'elementos', 'routeName'));
      }
-     
-        
+          
 
 
     /**
@@ -55,19 +57,22 @@ class IncomeController extends Controller
     {
         $request->validate([
             'amount' => 'required|numeric|min:0.01|max:999999',
-            'category' => 'required|string|max:20',
+            'category_id' => 'required|exists:categories,id', 
             'date' => 'required|date|before_or_equal:today',
         ]);
-
+    
         Income::create($request->all());
-
+    
         return redirect()->route('incomes.index')->with('success', 'Ingreso agregado correctamente.');
     }
     
+    
     public function create()
     {
-        return view('income.create');
+        $categories = Category::all();
+        return view('income.create', compact('categories'));
     }
+    
 
     /**
      * Update the specified resource in storage.
